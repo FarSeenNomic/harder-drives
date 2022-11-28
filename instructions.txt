@@ -20,9 +20,9 @@ pip install discord.py pillow mcrcon
 sudo apt-get install libguestfs-tools # this is for nbdinfo?
 # what was libtool for?
 
-~/Desktop/nbdkit/nbdkit -p 2007 -f -v python ./image_encoder.py
-~/Desktop/nbdkit/nbdkit -p 2007 -f -v --filter=blocksize python ./main.py minblock=1024
-~/Desktop/nbdkit/nbdkit -p 2007 -f -v --filter=blocksize python ./byter_furnace.py minblock=32
+nbdkit -p 2007 -f -v python ./image_encoder.py
+nbdkit -p 2007 -f -v --filter=blocksize python ./main.py minblock=1024
+nbdkit -p 2007 -f -v --filter=blocksize python ./byter_furnace.py minblock=32
 #sudo modprobe nbd
 sudo nbd-client localhost 2007 /dev/nbd0 -n
 sudo mkfs.fat --verbose /dev/nbd0
@@ -37,7 +37,7 @@ sudo nbd-client -d /dev/nbd0
 
 ===========
 
-~/Desktop/libnbd/info/nbdinfo nbd://localhost:2007
+nbdinfo nbd://localhost:2007
 #discordfs
 
 64K
