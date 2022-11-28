@@ -1,4 +1,5 @@
 import nbd
+import zlib
 
 from itertools import zip_longest
 def string_layer_padder(iterable, n, fillvalue=None):
@@ -132,12 +133,14 @@ Never gonna tell a lie and hurt you"""
 
 BLOCKSIZE = 32 #ctx.block_size(handle)[1] # preferred block size
 
-jw_string = jw_string.encode('UTF-8')
+jw_string = (jw_string+"\x00").encode('UTF-8')
 
 #for i, v in enumerate(string_layer_padder(jw_string, BLOCKSIZE, 0)):
 #	h.pwrite(bytearray(v), BLOCKSIZE*i)
 h.pwrite(bytearray(2048), 0)
 h.pwrite(jw_string, 0)
+z_string = zlib.compress(jw_string)
+h.pwrite(len(z_string).tobytes(4, byteorder="big") + z_string, 8192)
 
 string_bytes = b""
 for ptr in range(0, len(jw_string), BLOCKSIZE):

@@ -1,20 +1,21 @@
 sudo apt install
-	python3
-	python-is-python3
-	python3-dev
-	libnbd-bin
-	ocaml
-	libtool
-	autoconf
-	nbd-client
-	bash-completion
+    python3                   #For python3
+    python-is-python3         #As Expected
+    nbd-client                #The client to nbd
+    libnbd-bin                #For nbdinfo?
+    libguestfs-tools          #Or was this for that?
+    python3-dev               #C bindings?
+    ocaml                     #Needed to compile something not needed?
+    autoconf                  #^
+    bash-completion           #^
+    libtool                   #???
+    nbdkit                    #nbdkit python *
+    nbdkit-plugin-python      #^
+    python3-libnbd            #import pip
 
-pip install discord.py pillow
+pip install discord.py pillow mcrcon
 
-# seems that you must compile nbdkit from scratch for python plugin
-
-git clone https://github.com/libguestfs/nbdkit
-	instructions
+#git clone https://github.com/libguestfs/nbdkit
 
 sudo apt-get install libguestfs-tools # this is for nbdinfo?
 # what was libtool for?
@@ -22,6 +23,7 @@ sudo apt-get install libguestfs-tools # this is for nbdinfo?
 ~/Desktop/nbdkit/nbdkit -p 2007 -f -v python ./image_encoder.py
 ~/Desktop/nbdkit/nbdkit -p 2007 -f -v --filter=blocksize python ./main.py minblock=1024
 ~/Desktop/nbdkit/nbdkit -p 2007 -f -v --filter=blocksize python ./byter_furnace.py minblock=32
+#sudo modprobe nbd
 sudo nbd-client localhost 2007 /dev/nbd0 -n
 sudo mkfs.fat --verbose /dev/nbd0
 
@@ -39,11 +41,11 @@ sudo nbd-client -d /dev/nbd0
 #discordfs
 
 64K
-	mkfs / mkfs.ext2 / mkfs.ext3 / mkfs.ext4
-		Not enough space
-	mkfs.fat
-		count = 20480
-	mkfs.bfs
-		count = 4096 (min)
-	mkfs.ntfs
-		Not enough space (1MB)
+    mkfs / mkfs.ext2 / mkfs.ext3 / mkfs.ext4
+        Not enough space
+    mkfs.fat
+        count = 20480
+    mkfs.bfs
+        count = 4096 (min)
+    mkfs.ntfs
+        Not enough space (1MB)

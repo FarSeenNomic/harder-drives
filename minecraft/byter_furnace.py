@@ -29,14 +29,22 @@ def xnor(a, b):
     """Returns the bitwise XNOR operation of a and b"""
     return ~(a^b)
 
-base_x, base_z = 0,0
+#base_x, base_z = 0,0
 
 def bitptr2pos(bitptr):
     """Turns a bit pointer into a 3D position."""
-    x = bitptr & 15
-    z = (bitptr >> 4) & 15
-    y = (bitptr >> 8)
-    return [base_x+x, y, base_z+z]
+    x = bitptr & 15 #width of a chunk
+    z = (bitptr >> 4) & 15 #width of a chunk
+    y = (bitptr >> 8) & 255 #height of a chunk
+
+    base_x = 0 #chunks over
+    base_z = 0 #chunks over
+
+    for i in range(16, bitptr.bit_length()+1, 2):
+        base_x |= ((bitptr >> (i+0)) & 1) << ((i-16)//2)
+        base_z |= ((bitptr >> (i+1)) & 1) << ((i-16)//2)
+
+    return [16*base_x+x, y, 16*base_z+z]
 
 def ptr2bitptr(ptr, index):
     """Turns a byte pointer and the bit's index into a bit pointer."""
@@ -264,7 +272,7 @@ def config_complete():
     nbdkit.debug("Loading config...")
     config_file = configparser.ConfigParser()
     #import os
-    config_file.read('secret.ini')
+    config_file.read('SECRET.INI')
     server_config = config_file['LocalServer']
 
     address = server_config['address']
@@ -308,35 +316,10 @@ def unload():
     mcr.disconnect()
 
 ####
-if __name__ == '__main__':
+if __name__ == '__main__' and False:
     from timeit import default_timer as timer
 
     config_complete()
-
-    from itertools import zip_longest
-    def string_layer_padder(iterable, n, fillvalue=None):
-        "grouper(3, 'ABCDEFG', 'x') --> ABC DEF Gxx"
-        args = [iter(iterable)] * n
-        return zip_longest(*args, fillvalue=fillvalue)
-
-    strw = """Meet Skrillex in Phoenix
-    Study zymurgy
-    Get a pet axolotl named Hexxus
-    Observe a syzygy from Zzyzx, California
-    Port the games Zzyzzyxx and Xexyz to Xbox
-    Publish a Zzzax/Mister Mxyzptlk crossover
-    Bike from Xhafzotaj, Albania to Qazaxbəyli, Azerbaijan
-    Paint an Archaeopteryx fighting a Muzquizopteryx
-    Finish a game of Scrabble without getting punched
-    Make something called xkcd"""
-
-    strw = "Тень, знай своё место"
-    strw = "XYZZY"
-    strw = "Klaatu barada nikto"
-
-    strw = "Oo ee oo ah ah ting tang walla walla bing bang"
-    strw = "By the Power of Grayskull, I HAVE THE POWER!!"
-
     strw = """~He-man and the Masters of The Universe
     I am Adam, Prince of Eternia, Defender of the secrets of Castle Grayskull.
     This is Cringer, my fearless friend.
@@ -361,14 +344,6 @@ if __name__ == '__main__':
     end = timer()
     print("Read time:", end - start)
     print("Read time per:", (end - start)/(len(strw)+1))
-
-    layers = list(string_layer_padder((strw+"\x00").encode("utf-8"), 32, 0))
-    for i in range(len(layers)):
-        write_layer(32*i, layers[i])
-
-    for i in range(len(layers)):
-        print(layers[i])
-        print(read_layer(32*i))
     """
 
     from_bitptr = ptr2bitptr(2048-32, 0)
