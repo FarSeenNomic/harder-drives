@@ -1,0 +1,49 @@
+sudo apt install
+	python3
+	python-is-python3
+	python3-dev
+	libnbd-bin
+	ocaml
+	libtool
+	autoconf
+	nbd-client
+	bash-completion
+
+pip install discord.py pillow
+
+# seems that you must compile nbdkit from scratch for python plugin
+
+git clone https://github.com/libguestfs/nbdkit
+	instructions
+
+sudo apt-get install libguestfs-tools # this is for nbdinfo?
+# what was libtool for?
+
+~/Desktop/nbdkit/nbdkit -p 2007 -f -v python ./image_encoder.py
+~/Desktop/nbdkit/nbdkit -p 2007 -f -v --filter=blocksize python ./main.py minblock=1024
+~/Desktop/nbdkit/nbdkit -p 2007 -f -v --filter=blocksize python ./byter_furnace.py minblock=32
+sudo nbd-client localhost 2007 /dev/nbd0 -n
+sudo mkfs.fat --verbose /dev/nbd0
+
+#sudo lsblk -f
+mkdir ~/Desktop/mntpt/
+sudo mount -o defaults /dev/nbd0 ~/Desktop/mntpt/
+sudo chown -R $USER ~/Desktop/mntpt/
+...
+sudo umount /dev/nbd0
+sudo nbd-client -d /dev/nbd0
+
+===========
+
+~/Desktop/libnbd/info/nbdinfo nbd://localhost:2007
+#discordfs
+
+64K
+	mkfs / mkfs.ext2 / mkfs.ext3 / mkfs.ext4
+		Not enough space
+	mkfs.fat
+		count = 20480
+	mkfs.bfs
+		count = 4096 (min)
+	mkfs.ntfs
+		Not enough space (1MB)
