@@ -159,8 +159,8 @@ if string_bytes != jw_string:
 else:
 	print(":+1:")
 
-leng = int.from_bytes(h.pread(8192), byteorder="big")
-decomp_data = zlib.decompress()
+leng = int.from_bytes(h.pread(4, 8192), byteorder="big")
+decomp_data = zlib.decompress(h.pread(leng, 8192+4))
 
 if string_bytes != decomp_data:
 	print(string_bytes)
